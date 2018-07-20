@@ -5,7 +5,7 @@ install:
  - pip install coveralls
 script: 
  - pytest
- - coverge run --source=app -m pytest && coverage report
+ - coverage run --source=app -m pytest && coverage report
 after_success:
  - coveralls
 after_success:
