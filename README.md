@@ -18,4 +18,6 @@ HOW TO TEST ENDPOINTS:
            post {"title":"math contest","data":"it was a tough day.........."}
     run test_endpoints.py with pytest
 
+
+[![Coverage Status](https://coveralls.io/repos/github/KITHU/Diary_EndPoint/badge.svg?branch=ft-mydiary-rest-159199510)](https://coveralls.io/github/KITHU/Diary_EndPoint?branch=ft-mydiary-rest-159199510)
   
