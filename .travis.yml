@@ -1,8 +1,8 @@
 language: python
 python: 3.6
 install: 
-  -pip install -r requirement.txt
-  -pip install coveralls
+ -pip install -r requirement.txt
+ -pip install coveralls
 script: 
  -pytest
  -coverge run --source=app -m pytest && coverage report
