@@ -62,6 +62,16 @@ def update_diary_entry(entry_id):
     diary_entry[0]['data'] = request.json['data']
     return jsonify({'modified diary_entry': diary_entry[0]}), 201
 
+@APP.route('/mydiary/v1/diaryentries/<int:entry_id>', methods=['DELETE'])
+def del_diary_entry(entry_id):
+    """delete a diary entry using supplied id"""
+    diary_entry = [diary_entry for diary_entry in diary_db if diary_entry['id'] == entry_id]
+    if not diary_entry:
+        abort(404)
+    diary_db.remove(diary_entry[0])
+    return jsonify({'object was deleted':'succefully'})
+
 
 if __name__ == '__main__':
     APP.run(debug=True)
+    
