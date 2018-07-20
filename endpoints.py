@@ -14,7 +14,7 @@ def resource_not_found(error):
     """ this will handle 404 error: return json """
     return make_response(
         jsonify({'error': 'resource not found!!!!'}), 404)
-        
+
 @APP.route('/mydiary/v1/diaryentries', methods=['GET'])
 def get_all_diary_entries():
     """Tis method will return all diary data stored"""
@@ -45,6 +45,23 @@ def new_diary_entry():
     }
     diary_db.append(diary_entry)
     return jsonify({'new diary entry': diary_entry}), 201
+
+@APP.route('/mydiary/v1/diaryentries/<int:entry_id>', methods=['PUT'])
+def update_diary_entry(entry_id):
+    """ update diary entry using id to select it """
+    if not request.json:
+        abort(400)
+    if not isinstance(request.json['title'],str):
+        return jsonify({'error':'expect title to be string'}),400
+    if not isinstance(request.json['data'],str):
+        return jsonify({'error':'expect data to be string'}),400
+    diary_entry = [diary_entry for diary_entry in diary_db if diary_entry['id'] == entry_id]
+    if not diary_entry:
+        abort(404)
+    diary_entry[0]['title'] = request.json['title']
+    diary_entry[0]['data'] = request.json['data']
+    return jsonify({'modified diary_entry': diary_entry[0]}), 201
+
 
 if __name__ == '__main__':
     APP.run(debug=True)
