@@ -9,7 +9,12 @@ from flask import request
 
 APP = Flask(__name__)
 
-
+@APP.errorhandler(404)
+def resource_not_found(error):
+    """ this will handle 404 error: return json """
+    return make_response(
+        jsonify({'error': 'resource not found!!!!'}), 404)
+        
 @APP.route('/mydiary/v1/diaryentries', methods=['GET'])
 def get_all_diary_entries():
     """Tis method will return all diary data stored"""
@@ -23,6 +28,23 @@ def get_one_diary_entry(entry_id):
         return jsonify({'error':'expect title to be string'}),404
     return jsonify({'diary_entry': diary_entry[0]})
 
+@APP.route('/mydiary/v1/diaryentries', methods=['POST'])
+def new_diary_entry():
+    """ add new diary entry to """
+    if not request.json:
+        abort(400)
+    if not isinstance(request.json['title'],str):
+        return jsonify({'error':'expect title to be string'}),400
+    if not isinstance(request.json['data'],str):
+        return jsonify({'error':'expect data to be string'}),400
+    diary_entry = {
+        'id': diary_db[-1]['id'] + 1,
+        'date': cdate,
+        'title': request.json['title'],
+        'data': request.json['data']
+    }
+    diary_db.append(diary_entry)
+    return jsonify({'new diary entry': diary_entry}), 201
 
 if __name__ == '__main__':
     APP.run(debug=True)
