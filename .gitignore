@@ -24,6 +24,6 @@ hs_err_pid*
 #working directory files 
 .pytest_cache/
 .vscode/
-env/
+api/
 __pycache__/
 
