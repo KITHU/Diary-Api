@@ -3,8 +3,6 @@ import pytest
 import endpoints
 from endpoints import APP as app
 
-
-
 def test_diary_data():
     """data type should be of type list ...list of dictionaries"""
     assert isinstance(endpoints.diary_db, list)

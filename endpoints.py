@@ -3,9 +3,10 @@ from flask import Flask
 from flask import abort
 from flask import jsonify
 from flask import make_response
+from flask import request
 from mydatadb import DIARY_DB as diary_db
 from mydatadb import DT as cdate
-from flask import request
+
 
 APP = Flask(__name__)
 
@@ -25,7 +26,7 @@ def get_one_diary_entry(entry_id):
     """this method will return one diary entry"""
     diary_entry = [diary_entry for diary_entry in diary_db if diary_entry['id'] == entry_id]
     if not diary_entry:
-        return jsonify({'error':'expect title to be string'}),404
+        return jsonify({'error':'expect title to be string'}), 404
     return jsonify({'diary_entry': diary_entry[0]})
 
 @APP.route('/mydiary/v1/diaryentries', methods=['POST'])
@@ -33,10 +34,10 @@ def new_diary_entry():
     """ add new diary entry to """
     if not request.json:
         abort(400)
-    if not isinstance(request.json['title'],str):
-        return jsonify({'error':'expect title to be string'}),400
-    if not isinstance(request.json['data'],str):
-        return jsonify({'error':'expect data to be string'}),400
+    if not isinstance(request.json['title'], str):
+        return jsonify({'error':'expect title to be string'}), 400
+    if not isinstance(request.json['data'], str):
+        return jsonify({'error':'expect data to be string'}), 400
     diary_entry = {
         'id': diary_db[-1]['id'] + 1,
         'date': cdate,
@@ -51,10 +52,10 @@ def update_diary_entry(entry_id):
     """ update diary entry using id to select it """
     if not request.json:
         abort(400)
-    if not isinstance(request.json['title'],str):
-        return jsonify({'error':'expect title to be string'}),400
-    if not isinstance(request.json['data'],str):
-        return jsonify({'error':'expect data to be string'}),400
+    if not isinstance(request.json['title'], str):
+        return jsonify({'error':'expect title to be string'}), 400
+    if not isinstance(request.json['data'], str):
+        return jsonify({'error':'expect data to be string'}), 400
     diary_entry = [diary_entry for diary_entry in diary_db if diary_entry['id'] == entry_id]
     if not diary_entry:
         abort(404)
@@ -74,4 +75,3 @@ def del_diary_entry(entry_id):
 
 if __name__ == '__main__':
     APP.run(debug=True)
-    
