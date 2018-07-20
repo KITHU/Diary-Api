@@ -15,6 +15,6 @@ HOW TO TEST ENDPOINTS:
     run endpoints.py and test endpoints with postman
        n.b accept json data only
            post {"title":"math contest","data":"it was a tough day.........."}
-    run test_endpoints.py with pytest 
+    run test_endpoints.py with pytest
 
   
