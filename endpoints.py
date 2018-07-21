@@ -17,9 +17,9 @@ def resource_not_found(error):
         jsonify({'error': 'resource not found!!!!'}), 404)
 
 @APP.route('/')
-def get_all():
+def index():
     """Tis method will return all diary data stored"""
-    return jsonify({'diary_db': diary_db})
+    return '<h1>DEPLOYED TO HEROKU</h1>'
 
 
 @APP.route('/mydiary/v1/diaryentries', methods=['GET'])
