@@ -24,6 +24,10 @@ hs_err_pid*
 #working directory files 
 .pytest_cache/
 .vscode/
+<<<<<<< HEAD
 env/
+=======
+api/
+>>>>>>> ft-mydiary-rest-159199510
 __pycache__/
 
