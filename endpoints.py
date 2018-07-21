@@ -19,7 +19,7 @@ def resource_not_found(error):
 @APP.route('/')
 def index():
     """Tis method will return all diary data stored"""
-    return '<h1>DEPLOYED TO HEROKU</h1>'
+    return '<h1>DEPLOYED TO HEROKU tttt</h1>'
 
 
 @APP.route('/mydiary/v1/diaryentries', methods=['GET'])
