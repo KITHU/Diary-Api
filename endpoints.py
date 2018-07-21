@@ -16,6 +16,12 @@ def resource_not_found(error):
     return make_response(
         jsonify({'error': 'resource not found!!!!'}), 404)
 
+@APP.route('/')
+def get_all():
+    """Tis method will return all diary data stored"""
+    return jsonify({'diary_db': diary_db})
+
+
 @APP.route('/mydiary/v1/diaryentries', methods=['GET'])
 def get_all_diary_entries():
     """Tis method will return all diary data stored"""
