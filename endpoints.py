@@ -4,6 +4,7 @@ from flask import abort
 from flask import jsonify
 from flask import make_response
 from flask import request
+from flask import render_template
 from mydatadb import DIARY_DB as diary_db
 from mydatadb import DT as cdate
 
@@ -19,7 +20,7 @@ def resource_not_found(error):
 @APP.route('/')
 def index():
     """Tis method will return all diary data stored"""
-    return '<h1>DEPLOYED TO HEROKU tttt</h1>'
+    return render_template('index.html')
 
 
 @APP.route('/mydiary/v1/diaryentries', methods=['GET'])
