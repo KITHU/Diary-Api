@@ -1,4 +1,5 @@
 """api module for user and diary entries"""
+import dbconnection
 from flask import Flask
 from flask import abort
 from flask import jsonify
@@ -138,6 +139,28 @@ def register_a_user():
                   VALUES (%(username)s, %(email)s, %(password)s)""", diary_user)
     dbconnection.commit_closedb(conn)
     return jsonify({'user created': 'login with email and password'}), 201
+
+@APP.route('/mydiary/v1/auth/login', methods=['POST'])
+def user_login():
+    """ user login  """
+    conn = dbconnection.connection()
+    cur = conn.cursor()
+    if not request.json:
+        abort(400)
+    if not isinstance(request.json['email'],str):
+        return jsonify({'error':'expect email to be string'}),400
+    if not isinstance(request.json['password'],str):
+        return jsonify({'error':'expect password to be string'}),400
+    
+    email = request.json['email']
+    password = request.json['password']
+    cur.execute("SELECT user_email, password FROM users WHERE user_email = (%s) AND password = (%s)" , [email,password])
+    log = cur.fetchall()
+    if len(log) == 1:
+        return jsonify({'logged in success': 'authenticated'}), 201
+    else:
+        return jsonify({'invalid': ' email and password'}), 400
+    
 
 
 if __name__ == '__main__':
