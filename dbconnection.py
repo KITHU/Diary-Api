@@ -1,4 +1,5 @@
 import psycopg2
+import datetime
 
 def connection():
     """establish connection to database """
@@ -12,3 +13,9 @@ def connection():
 def commit_closedb(dbconn):
     dbconn.commit()
     dbconn.close()
+
+
+"""date getter """
+dt=str(datetime.datetime.now().date())
+
+
