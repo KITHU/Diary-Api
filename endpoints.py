@@ -1,4 +1,4 @@
-"""api module for user and diary entries"""
+"""api module for user and diary entries web gunicorn endpoints:APP"""
 import dbconnection
 from flask import Flask
 from flask import abort
