@@ -1,10 +1,4 @@
-[![Build Status](https://travis-ci.org/KITHU/travis_ci.svg?branch=master)](https://travis-ci.org/KITHU/travis_ci)
-
-[![Coverage Status](https://coveralls.io/repos/github/KITHU/Diary_EndPoint/badge.svg?branch=master)](https://coveralls.io/github/KITHU/Diary_EndPoint?branch=master)
-
-[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/KITHU/travis_ci.svg?branch=master)](https://travis-ci.org/KITHU/travis_ci)[![Coverage Status](https://coveralls.io/repos/github/KITHU/Diary_EndPoint/badge.svg?branch=master)](https://coveralls.io/github/KITHU/Diary_EndPoint?branch=master)[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Diary_EndPoint
 
