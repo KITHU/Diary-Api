@@ -1,21 +1,33 @@
-from flask_restplus import Api,model,fields
-from flask_jwt_extended import JWTManager
-from flask_restplus import Resource, reqparse,Api
-import dbconnection
+"""mydiary API where users can keep diaries"""
 
-from flask import Flask, jsonify, request
+import dbconnection
+from models import UserModels as users
+from validator import Validate as validate
+from jsonhandler import JSONExceptionHandler
+
+from flask import Flask
+from flask import jsonify
+from flask import request
+from flask_restplus import Api
+from flask_restplus import model
+from flask_restplus import fields
+from flask_restplus import Resource
+from flask_restplus import reqparse
+
+from flask_jwt_extended import JWTManager
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_raw_jwt
+from flask_cors import CORS
+
 from flask_bcrypt import Bcrypt
 
 
+
 app = Flask(__name__)
-
-
-
+CORS(app)
 
 authorizations = {
     'apikey': {
@@ -57,22 +69,39 @@ login_arg = reqparse.RequestParser()
 login_arg.add_argument('email', help = 'This field cannot be blank', required = True)
 login_arg.add_argument('password', help = 'This field cannot be blank', required = True)
 
+
 #model for diary entry
 new_diary = api.model('diary',{
     'title':fields.String(description='TITLE of the content'),
     'content':fields.String(description='what you have in mind')
 })
 
+@jwt.unauthorized_loader
+def unauthorized_response(callback):
+    return jsonify({
+        'ok': False,
+        'message': 'Missing Authorization Header'
+    }), 401
 
 @api.route('/mydiary/v1/auth/signup')
 class UserRegistration(Resource):
+    """this class handles user signin"""
     @api.expect(signup)
     def post(self):
         """registers user and then users can proceed to login"""
+        valid = validate()
         signup = signup_arg.parse_args()
         username = signup['username']
+        if(valid.valid_username(username)==False):
+            return {"error":"invalid username"},400
+
         password = signup['password']
+        if(valid.valid_username(password)==False):
+            return {"error":"password is invalid and week"},400
+
         email = signup['email']
+        if(valid.valid_email(email)==False):
+            return {"error":"invalid email andress"},400
 
         conn = dbconnection.connection()
         cur = conn.cursor()
@@ -91,13 +120,18 @@ class UserRegistration(Resource):
 
 @api.route('/mydiary/v1/auth/login')
 class UserLogin(Resource):
+    """this class handles user login"""
     @api.expect(login)
     def post(self):
         """log in users and returns a token to user:
         to authorize : Bearer <JWT>"""
+
         log = login_arg.parse_args()
         password = log['password']
         email = log['email']
+        valid = validate()
+        if(valid.valid_email(email)==False):
+            return {"error":"invalid email andress"},400
 
         conn = dbconnection.connection()
         cur = conn.cursor()
@@ -116,27 +150,34 @@ class UserLogin(Resource):
 
 @api.route('/mydiary/v1/diaryentry')
 class get_all_diary_entries(Resource):
+    """this class deals with creating a
+       and get all diarys"""
     @jwt_required
     @api.expect(new_diary)
     def post(self):
         """this will create a diary entry """
         email = get_jwt_identity()
+        valid = validate()
         if not request.json:
-            return{"ty":"error"},400
+            return{"error":"invalid json request"},400
         if not isinstance(request.json['title'],str):
             return {'error':'expect title to be string'},400
         if not isinstance(request.json['content'],str):
             return {'error':'expect content to be string'},400
         conn = dbconnection.connection()
         cur = conn.cursor()
-
         cur.execute("SELECT user_id FROM users WHERE user_email = (%s)",[email])
         id = cur.fetchone()
         user_id = id[0]
         currentdt = dbconnection.dt
-        contentd = request.json['content']
-        title = request.json['title']
 
+        contentd = request.json['content']
+        if(valid.valid_username(contentd) ==False):
+            return {"error":"content cannot be null"}
+
+        title = request.json['title']
+        if(valid.valid_username(title) ==False):
+            return {"error":"title cannot be null"}
         cur.execute("""INSERT INTO diaries(user_id,diary_date,diary_title,diary)
                   VALUES (%s, %s, %s , %s)""",[user_id,currentdt,title,contentd])
         dbconnection.commit_closedb(conn)
@@ -145,66 +186,27 @@ class get_all_diary_entries(Resource):
     @jwt_required
     def get(self):
         """this  will return all diary entries"""
-        conn = dbconnection.connection()
-        cur = conn.cursor()
         user_email = get_jwt_identity()
-
-        cur.execute("SELECT user_id FROM users WHERE user_email = (%s)",[user_email])
-        id = cur.fetchone()
-        user_id = id[0]
-        cur.execute("SELECT diary_id,diary_date,diary_title,diary FROM diaries WHERE user_id = (%s)",[user_id])
-        diaries = cur.fetchall()
-        user_diaries = []
-        for diary in diaries:
-            user_diary={"diary_id":diary[0],"date_written":diary[1],"title":diary[2],"content":diary[3]}
-            user_diaries.append(user_diary)
-        dbconnection.commit_closedb(conn)
-        return {'user diaries': user_diaries},200
+        all_diaries = users.get_all_diaries(user_email=user_email)
+        return all_diaries
 
 @api.route('/mydiary/v1/diaryentry/<int:d_id>')
 class update_diary_entry(Resource):
+    """this class updates,fetches one and deletes"""
     @api.expect(new_diary)
     @jwt_required
     def put(self,d_id):
         """update a diary"""
         user_email = get_jwt_identity()
-        conn = dbconnection.connection()
-        cur = conn.cursor()
-        cur.execute("SELECT user_id FROM users WHERE user_email = (%s)",[user_email])
-        id = cur.fetchone()
-        user_id = id[0]
-        cur.execute("SELECT diary_title,diary FROM diaries WHERE diary_id = (%s) AND user_id = (%s)",[d_id,user_id])
-        diary=cur.fetchone()
-        if(diary == None):
-            return {"message":"invalid id or you have no diary entries"},400
-        if not request.json:
-            return{"ty":"error"},400
-        if not isinstance(request.json['title'],str):
-            return {'error':'expect title to be string'},400
-        if not isinstance(request.json['content'],str):
-            return {'error':'expect content to be string'},400
-        contentd = request.json['content']
-        title = request.json['title']
-        cur.execute("UPDATE diaries SET diary_title = (%s), diary = (%s) WHERE diary_id = (%s)",[title,contentd,d_id])
-        dbconnection.commit_closedb(conn)
-        return {"message":"updated"}
+        user_update = users.update_diary(user_email=user_email,d_id=d_id)
+        return user_update
     
     @jwt_required
     def get(self,d_id):
         """this method will return one diary entry"""
-        conn = dbconnection.connection()
-        cur = conn.cursor()
         user_email = get_jwt_identity()
-        cur.execute("SELECT user_id FROM users WHERE user_email = (%s)",[user_email])
-        id = cur.fetchone()
-        user_id = id[0]
-        cur.execute("SELECT diary_id,diary_date,diary_title,diary FROM diaries WHERE diary_id = (%s) AND user_id = (%s)",[d_id,user_id])
-        diaries = cur.fetchone()
-        if(diaries ==None):
-            return {'diary': "YOU HAVE ZERO DIARIES ADD SOME"},200
-        diary={"diary_id":diaries[0],"date":diaries[1],"title":diaries[2],"content":diaries[3]}
-        dbconnection.commit_closedb(conn)
-        return {'diary': diary},200
+        get_a_diary = users.get_one_diary(user_email=user_email,d_id=d_id)
+        return get_a_diary
 
     @jwt_required
     def delete(self,d_id):
@@ -214,6 +216,35 @@ class update_diary_entry(Resource):
         cur.execute("DELETE FROM diaries WHERE diary_id = (%s)",[d_id])
         dbconnection.commit_closedb(conn)
         return {'message': 'deleted'}
+
+    @app.errorhandler(404)
+    def error_404(error=None):  # pylint: disable=unused-variable
+        # pylint: disable=unused-argument
+        """ handle request for unavailable url """
+        message = {
+            'status': '404',
+            'message': request.url + ' Was not found in this server',
+        }
+        response = jsonify(message)
+        response.status_code = 404
+        return response
+
+    @app.errorhandler(500)
+    def server_error(error=None):  # pylint: disable=unused-argument
+        # pylint: disable=unused-variable
+        """ handle server error """
+        response = {"status": 500, "Message":"Something went wrong!"}
+        return response, 500
+
+    @app.errorhandler(405)
+    def method_not_allowed(error=None): # pylint: disable=unused-variable
+        # pylint: disable=unused-argument
+        """ handle method not allowed """
+        response = {"status": 405, "Message":"Method not allowed"}
+        return response, 405
+
+  
+
     
    
 
