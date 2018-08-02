@@ -18,6 +18,7 @@ def test_get_all_diary_entries_status_code():
     with app.test_request_context():
         resp = endpoints.get_all_diary_entries()
         assert resp.status_code, 200
+        print(resp)
 
 def test_get_one_diary_entry_status_code():
     """status code for get one should be ok: 200 where id passed is valid """

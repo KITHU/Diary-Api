@@ -1,4 +1,5 @@
-"""api module for user and diary entries"""
+"""api module for user and diary entries web gunicorn endpoints:APP"""
+import dbconnection
 from flask import Flask
 from flask import abort
 from flask import jsonify
@@ -19,7 +20,36 @@ def resource_not_found(error):
 
 @APP.route('/')
 def index():
-    """Tis method will return all diary data stored"""
+    """Tis method will return all diary data stored"""@APP.route('/mydiary/v1/auth/signup', methods=['POST'])
+def register_a_user():
+    """ register a new user """
+    conn = dbconnection.connection()
+    cur = conn.cursor()
+    if not request.json:
+        abort(400)
+    if not isinstance(request.json['username'],str):
+        return jsonify({'error':'expect username to be string'}),400
+    if not isinstance(request.json['email'],str):
+        return jsonify({'error':'expect email to be string'}),400
+    if not isinstance(request.json['password'],str):
+        return jsonify({'error':'expect password to be string'}),400
+    email = request.json['email']
+    cur.execute("SELECT user_email FROM users")
+    my_emails = cur.fetchall()
+    for emails in my_emails:
+        print(emails[0])
+        if emails[0] == email:
+            
+            return jsonify({'error': 'user already exist change credetials'}),400
+    diary_user = {
+            'username': request.json['username'],
+            'email': request.json['email'],
+            'password': request.json['password']
+            }
+    cur.execute("""INSERT INTO users(user_name,user_email,password)
+                  VALUES (%(username)s, %(email)s, %(password)s)""", diary_user)
+    dbconnection.commit_closedb(conn)
+    return jsonify({'user created': 'login with email and password'}), 201
     return render_template('index.html')
 
 
@@ -78,6 +108,59 @@ def del_diary_entry(entry_id):
         abort(404)
     diary_db.remove(diary_entry[0])
     return jsonify({'object was deleted':'succefully'})
+
+@APP.route('/mydiary/v1/auth/signup', methods=['POST'])
+def register_a_user():
+    """ register a new user """
+    conn = dbconnection.connection()
+    cur = conn.cursor()
+    if not request.json:
+        abort(400)
+    if not isinstance(request.json['username'],str):
+        return jsonify({'error':'expect username to be string'}),400
+    if not isinstance(request.json['email'],str):
+        return jsonify({'error':'expect email to be string'}),400
+    if not isinstance(request.json['password'],str):
+        return jsonify({'error':'expect password to be string'}),400
+    email = request.json['email']
+    cur.execute("SELECT user_email FROM users")
+    my_emails = cur.fetchall()
+    for emails in my_emails:
+        print(emails[0])
+        if emails[0] == email:
+            
+            return jsonify({'error': 'user already exist change credetials'}),400
+    diary_user = {
+            'username': request.json['username'],
+            'email': request.json['email'],
+            'password': request.json['password']
+            }
+    cur.execute("""INSERT INTO users(user_name,user_email,password)
+                  VALUES (%(username)s, %(email)s, %(password)s)""", diary_user)
+    dbconnection.commit_closedb(conn)
+    return jsonify({'user created': 'login with email and password'}), 201
+
+@APP.route('/mydiary/v1/auth/login', methods=['POST'])
+def user_login():
+    """ user login  """
+    conn = dbconnection.connection()
+    cur = conn.cursor()
+    if not request.json:
+        abort(400)
+    if not isinstance(request.json['email'],str):
+        return jsonify({'error':'expect email to be string'}),400
+    if not isinstance(request.json['password'],str):
+        return jsonify({'error':'expect password to be string'}),400
+    
+    email = request.json['email']
+    password = request.json['password']
+    cur.execute("SELECT user_email, password FROM users WHERE user_email = (%s) AND password = (%s)" , [email,password])
+    log = cur.fetchall()
+    if len(log) == 1:
+        return jsonify({'logged in success': 'authenticated'}), 201
+    else:
+        return jsonify({'invalid': ' email and password'}), 400
+    
 
 
 if __name__ == '__main__':

@@ -1,0 +1,18 @@
+table diaries table
+
+CREATE TABLE diaries (
+ diary_id serial PRIMARY KEY,
+ user_id integer REFERENCES users(user_id),
+ diary_date varchar (50) NOT NULL,
+ diary_title varchar (50) NOT NULL,
+ diary text NOT NULL
+ );
+
+table users script
+
+CREATE TABLE users (
+ user_id serial PRIMARY KEY,               
+ user_name varchar (50) NOT NULL,
+ user_email varchar (50) NOT NULL,
+ password varchar(85) NOT NULL
+ );
