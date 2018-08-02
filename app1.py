@@ -43,7 +43,7 @@ api = Api(app, authorizations=authorizations, security='apikey')
 
 app.config['JWT_SECRET_KEY'] = 'a7cc3c5ec915dfa1e24267471def9b66'
 jwt = JWTManager(app)
-
+jwt._set_error_handler_callbacks(api)
 bcrypt = Bcrypt()
 
 
@@ -75,13 +75,11 @@ new_diary = api.model('diary',{
     'title':fields.String(description='TITLE of the content'),
     'content':fields.String(description='what you have in mind')
 })
+diary_arg = reqparse.RequestParser()
+diary_arg.add_argument('title', help = "this field cannot be blank", required = True)
+diary_arg.add_argument('content', help = "this field cannot be blank", required = True)
 
-@jwt.unauthorized_loader
-def unauthorized_response(callback):
-    return jsonify({
-        'ok': False,
-        'message': 'Missing Authorization Header'
-    }), 401
+
 
 @api.route('/mydiary/v1/auth/signup')
 class UserRegistration(Resource):
@@ -158,12 +156,16 @@ class get_all_diary_entries(Resource):
         """this will create a diary entry """
         email = get_jwt_identity()
         valid = validate()
-        if not request.json:
-            return{"error":"invalid json request"},400
-        if not isinstance(request.json['title'],str):
-            return {'error':'expect title to be string'},400
-        if not isinstance(request.json['content'],str):
-            return {'error':'expect content to be string'},400
+        new_diary = diary_arg.parse_args()
+        
+        # title = new_diary['title']
+        # contentd = new_diary['content']
+        # if not request.json:
+        #     return{"error":"invalid json request"},400
+        # if not isinstance(request.json['title'],str):
+        #     return {'error':'expect title to be string'},400
+        # if not isinstance(request.json['content'],str):
+        #     return {'error':'expect content to be string'},400
         conn = dbconnection.connection()
         cur = conn.cursor()
         cur.execute("SELECT user_id FROM users WHERE user_email = (%s)",[email])
@@ -171,11 +173,11 @@ class get_all_diary_entries(Resource):
         user_id = id[0]
         currentdt = dbconnection.dt
 
-        contentd = request.json['content']
+        contentd = new_diary['content']
         if(valid.valid_username(contentd) ==False):
             return {"error":"content cannot be null"}
 
-        title = request.json['title']
+        title = new_diary['title']
         if(valid.valid_username(title) ==False):
             return {"error":"title cannot be null"}
         cur.execute("""INSERT INTO diaries(user_id,diary_date,diary_title,diary)
@@ -213,6 +215,15 @@ class update_diary_entry(Resource):
         """this will delete one diary entry"""
         conn = dbconnection.connection()
         cur = conn.cursor()
+        email = get_jwt_identity()
+        cur.execute("SELECT user_id FROM users WHERE user_email = (%s)",[email])
+        id = cur.fetchone()
+        user_id = id[0]
+        cur.execute("SELECT * FROM diaries WHERE diary_id = (%s) AND user_id = (%s)",[d_id,user_id])
+        count = cur.fetchone()
+        if count is None:
+            return{"error":"invalid id given"},400
+
         cur.execute("DELETE FROM diaries WHERE diary_id = (%s)",[d_id])
         dbconnection.commit_closedb(conn)
         return {'message': 'deleted'}
@@ -243,10 +254,13 @@ class update_diary_entry(Resource):
         response = {"status": 405, "Message":"Method not allowed"}
         return response, 405
 
-  
-
+    @jwt.unauthorized_loader
+    def unauthorized_response(callback):
+        return jsonify({
+        'ok': False,
+        'message': 'Missing Authorization Header'
+         }), 401
     
-   
 
 if __name__ == '__main__':
     app.run(debug=True)

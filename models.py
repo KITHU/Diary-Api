@@ -1,4 +1,7 @@
 import dbconnection
+from flask_restplus import reqparse
+from flask_restplus import Api
+from flask_restplus import model
 from validator import Validate as validate
 from flask import Flask
 from flask import jsonify
@@ -18,12 +21,17 @@ class UserModels():
             return {"error":"invalid id or you have no diary entries"},400
         if not request.json:
             return{"error":"ivalidy json body"},400
+        if not request.json['content']:
+            return {"error":"content field is required"},400
+        if not request.json['title']:
+            return {"error":"title field is required"},400
         if not isinstance(request.json['title'],str):
             return {'error':'expect title to be string'},400
         if not isinstance(request.json['content'],str):
             return {'error':'expect content to be string'},400
 
         valid=validate()
+       
         contentd = request.json['content']
         if(valid.valid_title(contentd)==False):
             return {"error":"Enter valid content"},400
