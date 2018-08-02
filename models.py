@@ -67,4 +67,4 @@ class UserModels():
             user_diary={"diary_id":diary[0],"date_written":diary[1],"title":diary[2],"content":diary[3]}
             user_diaries.append(user_diary)
         dbconnection.commit_closedb(conn)
-        return {'user diaries': user_diaries},200
+        return {'diaries': user_diaries},200
