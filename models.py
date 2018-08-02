@@ -20,30 +20,39 @@ class UserModels():
         if(diary == None):
             return {"error":"invalid id or you have no diary entries"},400
         if not request.json:
-            return{"error":"ivalidy json body"},400
-        if not request.json['content']:
-            return {"error":"content field is required"},400
-        if not request.json['title']:
-            return {"error":"title field is required"},400
-        if not isinstance(request.json['title'],str):
-            return {'error':'expect title to be string'},400
-        if not isinstance(request.json['content'],str):
-            return {'error':'expect content to be string'},400
+            return{"error":"invalidy json body"},400
+        data = request.json
+        contentd = data.get('content')
+        title = data.get('title')
 
-        valid=validate()
-       
-        contentd = request.json['content']
-        if(valid.valid_title(contentd)==False):
-            return {"error":"Enter valid content"},400
+        if not contentd and not title:
+            return {"error":"check your input data"},400
         
-        title = request.json['title']
-        if(valid.valid_title(title)==False):
-            return {"error":"Enter valid title"},400
-        
-        cur.execute("UPDATE diaries SET diary_title = (%s), diary = (%s) WHERE diary_id = (%s)", [title,contentd,d_id])
-        dbconnection.commit_closedb(conn)
-        return {"message":"updated"}
+        if contentd and title:
+            valid=validate()
+            if(valid.valid_title(title)==False):
+                return {"error":"Enter valid title"},400
+            if(valid.valid_title(contentd)==False):
+                return {"error":"Enter valid content"},400 
+            cur.execute("UPDATE diaries SET diary_title = (%s), diary = (%s) WHERE diary_id = (%s)", [title,contentd,d_id])
+            dbconnection.commit_closedb(conn)
+            return {"message":"all updated"}
 
+        if contentd:
+            valid=validate()
+            if(valid.valid_title(contentd)==False):
+                return {"error":"Enter valid content"},400
+            cur.execute("UPDATE diaries SET diary = (%s) WHERE diary_id = (%s)", [contentd,d_id])
+            dbconnection.commit_closedb(conn)
+            return {"message":"content updated"}
+        
+        if title:
+            valid=validate()
+            if(valid.valid_title(title)==False):
+                return {"error":"Enter valid content"},400
+            cur.execute("UPDATE diaries SET diary_title = (%s) WHERE diary_id = (%s)", [title,d_id])
+            dbconnection.commit_closedb(conn)
+            return {"message":"title updated"}
 
     @staticmethod
     def get_one_diary(user_email,d_id):
