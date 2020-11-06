@@ -1,11 +1,14 @@
 # My DIARY
+> A collection of notes from your life..
 
-Rest Endpoints for my diary API
+### End points:
+- **POST** : create user */auth/signup*
+- **POST** : login user */auth/signin*
+- **POST** : reset password */auth/reset*
+- **POST** : activate user */auth/active*
 
-FEATURES:
-    GET endpoint: fetch all /mydiary/v1/diaryentries
-    GET endpoint: fetch one  /mydiary/v1/diaryentries/<int:id> 
-    POST endpoint: create new /mydiary/v1/diaryentries
-    PUT endpoint: modify one /mydiary/v1/diaryentries/<int:id>
-    DELETE endpoint: delete one /mydiary/v1/diaryentries/<int:id>
-    
+- **GET** : fetch all diaries */mydiary/v1/diaryentries*
+- **GET** : fetch diary entry  */mydiary/v1/diaryentries/<int:id>* 
+- **POST** : create new diary */mydiary/v1/diaryentries*
+- **PUT** : modify specific diary */mydiary/v1/diaryentries/<int:id>*
+- **DELETE** : delete specific diary */mydiary/v1/diaryentries/<int:id>*

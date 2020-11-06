@@ -1,0 +1,39 @@
+from flask import request
+from flask_restplus import Resource, reqparse
+
+from main import api
+
+@api.route('/auth/login')
+class Login(Resource):
+    
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email',required=True, type=str)
+        parser.add_argument('password',required=False, type=int)
+        args = parser.parse_args()
+        return {'message': args}
+
+
+@api.route('/auth/signup')
+class SignUp(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('firstname',required=True, type=str)
+        parser.add_argument('secondname',required=True, type=str)
+        parser.add_argument('email',required=True, type=str)
+        parser.add_argument('phoneNumber',required=True, type=str)
+        parser.add_argument('password',required=False, type=int)
+        args = parser.parse_args()
+        return {'message': args}
+
+
+@api.route('/auth/confirm')
+class Confirm(Resource):
+    def post(self):
+        return {'message': 'confirm user and activate them'}
+
+
+@api.route('/auth/reset')
+class Reset(Resource):
+    def post(self):
+        return {'message': 'reset user password'}
