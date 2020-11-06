@@ -1,6 +1,6 @@
-# Diary_EndPoint
+# My DIARY
 
-Rest Endpoints for my diary app
+Rest Endpoints for my diary API
 
 FEATURES:
     GET endpoint: fetch all /mydiary/v1/diaryentries
@@ -9,13 +9,3 @@ FEATURES:
     PUT endpoint: modify one /mydiary/v1/diaryentries/<int:id>
     DELETE endpoint: delete one /mydiary/v1/diaryentries/<int:id>
     
-REQUIREMENTS:
-    install requirements.txt
-    
-HOW TO TEST ENDPOINTS:
-    run endpoints.py and test endpoints with postman
-       n.b accept json data only
-           post {"title":"math contest","data":"it was a tough day.........."}
-    run test_endpoints.py with pytest
-
-  
