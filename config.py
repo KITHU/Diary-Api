@@ -25,12 +25,14 @@ class DevelopmentConfig(Config):
     """App development configuration."""
 
     DEBUG = True
+    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URI')
 
 
 class TestingConfig(Config):
     """App testing configuration."""
 
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URI')
     
     
 config = {

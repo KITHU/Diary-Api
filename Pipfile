@@ -12,6 +12,8 @@ python-dotenv = "*"
 werkzeug = "==0.16.1"
 flask-marshmallow = "*"
 flask-sqlalchemy = "*"
+flask-migrate = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.8"
