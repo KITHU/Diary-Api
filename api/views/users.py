@@ -1,7 +1,11 @@
 from flask import request
 from flask_restplus import Resource, reqparse
+from marshmallow import ValidationError
 
 from main import api
+from api.schema.userschema import UserSchema
+
+userschema = UserSchema()
 
 @api.route('/auth/login')
 class Login(Resource):
@@ -17,14 +21,11 @@ class Login(Resource):
 @api.route('/auth/signup')
 class SignUp(Resource):
     def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('firstname',required=True, type=str)
-        parser.add_argument('secondname',required=True, type=str)
-        parser.add_argument('email',required=True, type=str)
-        parser.add_argument('phoneNumber',required=True, type=str)
-        parser.add_argument('password',required=False, type=int)
-        args = parser.parse_args()
-        return {'message': args}
+        try:
+            user_data = userschema.load(request.get_json())
+        except ValidationError as err:
+            return err.messages,400
+        return {'message': user_data}, 201
 
 
 @api.route('/auth/confirm')

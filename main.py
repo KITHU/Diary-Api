@@ -5,6 +5,7 @@ from os import getenv
 from flask import Flask
 from flask_restplus import Api
 from flask_migrate import Migrate
+from flask_marshmallow import Marshmallow
 
 # Local ImportS
 from config import config
@@ -32,6 +33,9 @@ def create_app(config=config.get(config_name)):
     db.init_app(app)
     # initialize migration app
     migrate.init_app(app,db)
+    # initialize marshmallow
+    from api.schema.schema import ma
+    ma.init_app(app)
 
     # import all models
     from api.models import usermodel
