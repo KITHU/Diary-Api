@@ -7,6 +7,7 @@ from api.schema.userschema import UserSchema
 
 userschema = UserSchema()
 
+
 @api.route('/auth/login')
 class Login(Resource):
     

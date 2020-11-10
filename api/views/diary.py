@@ -3,6 +3,7 @@ from flask_restplus import Resource, reqparse
 
 from main import api
 
+
 @api.route('/diaryentries')
 class DiaryAll(Resource):
     
