@@ -4,6 +4,8 @@ from marshmallow import ValidationError
 
 from main import api
 from api.schema.userschema import UserSchema
+from api.models.database import db
+from api.models.usermodel import UserModel
 
 userschema = UserSchema()
 
@@ -23,10 +25,12 @@ class Login(Resource):
 class SignUp(Resource):
     def post(self):
         try:
-            user_data = userschema.load(request.get_json())
+            user_json = request.get_json()
+            user_data = userschema.load(user_json)
         except ValidationError as err:
             return err.messages,400
-        return {'message': user_data}, 201
+        user_data.save()
+        return {'message': userschema.dump(user_data)}, 201
 
 
 @api.route('/auth/confirm')
