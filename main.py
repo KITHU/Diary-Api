@@ -6,6 +6,7 @@ from flask import Flask
 from flask_restplus import Api
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
 
 # Local ImportS
 from config import config
@@ -19,7 +20,8 @@ api = Api(api_blueprint, doc=False)
 def initialize_blueprint(application):
     application.register_blueprint(api_blueprint)
 
-migrate =Migrate()
+migrate = Migrate()
+bcrypt = Bcrypt()
 
 
 def create_app(config=config.get(config_name)):
@@ -28,6 +30,8 @@ def create_app(config=config.get(config_name)):
     app.config.from_object(config)
     initialize_blueprint(app)
     app.url_map.strict_slashes = False
+
+    bcrypt.init_app(app)
 
     # initialize database
     db.init_app(app)
