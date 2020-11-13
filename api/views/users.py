@@ -6,11 +6,12 @@ from main import api, bcrypt
 from api.schema.userschema import UserSchema
 from api.models.database import db
 from api.models.usermodel import UserModel
+from api.middleware.authentication import Auth
 
 userschema = UserSchema()
 
 
-@api.route('/auth/login')
+@api.route('/auth/signin')
 class Login(Resource):
     
     def post(self):
@@ -34,7 +35,7 @@ class SignUp(Resource):
             return err.messages,400
         if UserModel.get_by_email(user_data.email):
             return {'message': "user already exist"},400
-        pw_hash = bcrypt.generate_password_hash(user_data.password).decode('utf-8')
+        pw_hash = Auth.hash_password(user_data.password)
         user_data.password = pw_hash
         user_data.save()
         return {'message': userschema.dump(user_data)}, 201
