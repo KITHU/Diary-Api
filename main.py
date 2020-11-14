@@ -12,6 +12,7 @@ from flask_bcrypt import Bcrypt
 from config import config
 from api import api_blueprint
 from api.models.database import db
+from api.middleware.base_validation import middleware_blueprint
 
 
 config_name = getenv('FLASK_ENV', default='production')
@@ -19,6 +20,7 @@ api = Api(api_blueprint, doc=False)
 
 def initialize_blueprint(application):
     application.register_blueprint(api_blueprint)
+    application.register_blueprint(middleware_blueprint)
 
 migrate = Migrate()
 bcrypt = Bcrypt()

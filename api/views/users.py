@@ -9,6 +9,7 @@ from api.models.usermodel import UserModel
 from api.middleware.authentication import Auth
 
 userschema = UserSchema()
+auth = Auth()
 
 
 @api.route('/auth/signin')
@@ -19,11 +20,8 @@ class Login(Resource):
         parser.add_argument('email',required=True, type=str)
         parser.add_argument('password',required=False, type=str)
         args = parser.parse_args()
-        user = UserModel.get_by_email(args.email)
-        if user and bcrypt.check_password_hash(user.password, args.password):
-            return {'message': 'you are logined in'},200  
-        return {'message': 'Wrong email or password'}
-
+        token = auth.authenticate(args.email,args.password)
+        return {'message': token}
 
 @api.route('/auth/signup')
 class SignUp(Resource):
