@@ -16,7 +16,7 @@ class Auth():
         if user and self.check_hashed(user.password,password):
             return jwt.encode(payload,'secret').decode('utf-8')
         else:
-            raise ValidationError({'message','invalid email or password'})
+            raise ValidationError({'message':'invalid email or password'})
 
     def identity():
         pass

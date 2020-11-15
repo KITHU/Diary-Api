@@ -2,7 +2,7 @@
 from os import getenv
 
 # Third party imports
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restplus import Api
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
@@ -12,7 +12,7 @@ from flask_bcrypt import Bcrypt
 from config import config
 from api import api_blueprint
 from api.models.database import db
-from api.middleware.base_validation import middleware_blueprint
+from api.middleware.base_validation import middleware_blueprint, ValidationError
 
 
 config_name = getenv('FLASK_ENV', default='production')
@@ -51,3 +51,12 @@ def create_app(config=config.get(config_name)):
     
 
     return app
+
+@api.errorhandler(ValidationError)
+@middleware_blueprint.app_errorhandler(ValidationError)
+def handle_exception(error):
+    """Error handler called when a ValidationError Exception is raised"""
+
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
