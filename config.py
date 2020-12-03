@@ -13,6 +13,7 @@ class Config(object):
     """App base configuration."""
     DEBUG = False
     TESTING = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class ProductionConfig(Config):
@@ -32,7 +33,7 @@ class TestingConfig(Config):
     """App testing configuration."""
 
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = getenv('DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = getenv('TEST_DATABASE_URI')
     
     
 config = {

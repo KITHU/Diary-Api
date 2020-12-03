@@ -33,7 +33,7 @@ class SignUp(Resource):
             return err.messages,400
         if UserModel.get_by_email(user_data.email):
             return {'message': "user already exist"},400
-        pw_hash = Auth.hash_password(user_data.password)
+        pw_hash = auth.hash_password(user_data.password)
         user_data.password = pw_hash
         user_data.save()
         return {'message': userschema.dump(user_data)}, 201
