@@ -38,7 +38,7 @@ class SignUp(Resource):
         user_data.save()
         return {'message': userschema.dump(user_data)}, 201
 
-
+# TODO: add more functionality by completing the following route
 @api.route('/auth/confirm')
 class Confirm(Resource):
     def post(self):
