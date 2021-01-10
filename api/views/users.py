@@ -27,7 +27,7 @@ class Login(Resource):
 class SignUp(Resource):
     def post(self):
         try:
-            user_json = request.get_json()
+            user_json = request.get_json(force=True)
             user_data = userschema.load(user_json)
         except ValidationError as err:
             return err.messages,400
