@@ -14,11 +14,11 @@ class Auth():
         user = UserModel.get_by_email(email)
         payload = userschema.dump(user)
         if user and self.check_hashed(user.password,password):
-            return jwt.encode(payload,'secret').decode('utf-8')
+            return jwt.encode(payload,'secret')
         else:
             raise ValidationError({'message':'invalid email or password'})
 
-    def identity():
+    def identity(self,a,b):
         pass
         
 
