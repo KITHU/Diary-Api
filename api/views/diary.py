@@ -2,11 +2,14 @@ from flask import request
 from flask_restplus import Resource, reqparse
 
 from main import api
+from api.middleware.authentication import Auth
 
+auth = Auth()
 
 @api.route('/diaryentries')
 class DiaryAll(Resource):
-    
+
+    @auth.identity
     def get(self):
         return {'message': 'return all diaries for the current user'}
 

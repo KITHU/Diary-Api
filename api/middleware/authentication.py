@@ -1,5 +1,7 @@
 from main import bcrypt
 import jwt
+from flask import request
+
 
 from api.models.usermodel import UserModel
 from api.schema.userschema import UserSchema
@@ -18,8 +20,18 @@ class Auth():
         else:
             raise ValidationError({'message':'invalid email or password'})
 
-    def identity(self,a,b):
-        pass
+
+    def get_token(self, http_request=request):
+        token = request.headers.get('Authorization')
+        return token
+
+    
+    def identity(self,func):
+        def wrapper_func(*args,**kwargs):
+            token = self.get_token()
+            print("wrapper running wow... "+ token)
+            return func(*args,**kwargs)
+        return wrapper_func
         
 
     def hash_password(self, raw_pw):
