@@ -11,7 +11,7 @@ class DiaryAll(Resource):
 
     @auth.identity
     def get(self):
-        return {'message': 'return all diaries for the current user'}
+        return {'message': request.decoded_token}
 
     def post(self):
         parser = reqparse.RequestParser()
