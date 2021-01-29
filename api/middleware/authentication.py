@@ -33,10 +33,21 @@ class Auth():
         def wrapper_func(*args,**kwargs):
             token = self.get_token()
             print("wrapper running wow... "+ token)
-            decoded_token = jwt.decode(token, secret, algorithms=["HS256"],
-            options={
-                    'verify_signature': True,
-                    'verify_exp': True })
+            try:
+                decoded_token = jwt.decode(token, secret, algorithms=["HS256"],
+                    options={
+                            'verify_signature': True,
+                            'verify_exp': True })
+            except (ValueError,
+                TypeError,
+                jwt.ExpiredSignatureError,
+                jwt.DecodeError,
+                jwt.InvalidSignatureError,
+                jwt.InvalidAlgorithmError,
+                jwt.InvalidIssuerError) as error:
+                import pdb; pdb.set_trace()
+                raise ValidationError({'message':type(error)},500)
+            
             setattr(request,'decoded_token',decoded_token)
             return func(*args,**kwargs)
         return wrapper_func
