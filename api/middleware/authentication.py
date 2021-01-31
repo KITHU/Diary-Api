@@ -45,7 +45,6 @@ class Auth():
                 jwt.InvalidSignatureError,
                 jwt.InvalidAlgorithmError,
                 jwt.InvalidIssuerError) as error:
-                import pdb; pdb.set_trace()
                 raise ValidationError({'message':type(error)},500)
             
             setattr(request,'decoded_token',decoded_token)
