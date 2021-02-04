@@ -13,7 +13,7 @@ class TestUsersEdpoints:
         assert response.status_code == 201
 
 
-    def test_signin_user(self, client, init_db):
+    def test_signin_user_pass(self, client, init_db):
         # test app ability to sigin existing user
         #with correct email and password
         data = {
