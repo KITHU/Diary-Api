@@ -15,11 +15,6 @@ config_name = getenv('FLASK_ENV', default='production')
 # create application object
 app = create_app(config[config_name])
 
-@app.route('/')
-def index():
-    """Process / routes and returns 'Welcome to the AM api' as json."""
-    return jsonify(dict(message='Welcome to my api'))
-
 
 if __name__ == '__main__':
     app.run()
