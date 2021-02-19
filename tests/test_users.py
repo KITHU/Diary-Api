@@ -1,6 +1,9 @@
 from flask import json
 
 class TestUsersEdpoints:
+    """
+        - class for testing User endpoints
+    """
     def test_creat_new_user_pass(self, client, init_db):
         # test app ability to create a new user
         data = {
@@ -24,8 +27,9 @@ class TestUsersEdpoints:
 
 
     def test_signin_user_pass(self, client, init_db):
-        # test app ability to sigin existing user
-        #with correct email and password
+        """ test app ability to sigin existing user
+            with correct email and password 
+        """
         data = {
                 'email':'mwaniki.muriuki@gmail.com',
                 'password':'1234r'
