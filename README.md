@@ -2,9 +2,38 @@
 [![Coverage Status](https://coveralls.io/repos/github/KITHU/Diary-Api/badge.svg?branch=master)](https://coveralls.io/github/KITHU/Diary-Api?branch=master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ebddd3ad732a5466541f/maintainability)](https://codeclimate.com/github/KITHU/Diary-Api/maintainability)
 
-# My DIARY
+# **My DIARY**
 > A collection of notes from your life..
 
+## **Set Up Development Environment:**
+- Clone the Diary-Api repo and cd into it:
+  ```
+   https://github.com/KITHU/Diary-Api.git 
+  ```
+- Install all Dependancies
+  ```
+   pipenv install 
+  ```
+
+- Make a copy of the .env.sample file and rename it to .env and update the variables accordingly
+- Activate a virtual environment:
+  ```
+    pipenv shell
+  ```
+- Apply migrations:
+  ```
+    python manage.py migrate
+
+  ```
+- Run App
+  ```
+    python manage.py runserver
+  ```
+
+- Run Tests
+  ```
+    pytest
+  ```
 
 ## **Endpoints:**
 ### SignUp
@@ -34,7 +63,7 @@ Example request body:
 }
 
 ```
-- **POST** : login user */auth/signin*
+
 - **POST** : reset password */auth/reset*
 - **POST** : activate user */auth/active*
 
