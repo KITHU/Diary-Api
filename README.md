@@ -5,8 +5,35 @@
 # My DIARY
 > A collection of notes from your life..
 
-### End points:
-- **POST** : create user */auth/signup*
+
+## **Endpoints:**
+### SignUp
+
+`POST /api/v1/auth/signup`
+
+Example request body:
+``` 
+{
+    "first_name":"John",
+    "last_name":"Doe",
+    "email":"johndoe@gmail.com",
+    "password":"djnoe12"
+}
+
+```
+
+### SignIn
+
+`POST /api/v1/auth/signin`
+
+Example request body:
+``` 
+{
+    "email":"johndoe@gmail.com",
+    "password":"djnoe12"
+}
+
+```
 - **POST** : login user */auth/signin*
 - **POST** : reset password */auth/reset*
 - **POST** : activate user */auth/active*
