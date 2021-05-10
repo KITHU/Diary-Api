@@ -22,12 +22,20 @@
   ```
 - Apply migrations:
   ```
-    python manage.py migrate
+    flask db upgrade
 
   ```
+- Make migrations:
+  ```
+    flask db migrate
+
+  ```
+
 - Run App
   ```
     python manage.py runserver
+             or 
+    flask run
   ```
 
 - Run Tests
