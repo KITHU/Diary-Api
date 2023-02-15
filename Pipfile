@@ -9,7 +9,7 @@ verify_ssl = true
 flask = "*"
 flask-restplus = "*"
 python-dotenv = "*"
-werkzeug = "==0.16.1"
+werkzeug = "==2.2.3"
 flask-marshmallow = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
